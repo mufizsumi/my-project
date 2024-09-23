@@ -1,0 +1,81 @@
+.admin-page {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.filters {
+    margin-bottom: 20px;
+}
+
+.filters input {
+    margin-right: 10px;
+    padding: 8px;
+}
+
+.filters button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.filters button:hover {
+    background-color: #218838;
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.data-table, .map-container {
+    width: 48%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.map-container {
+    height: 500px;
+}
+
+.map {
+    width: 100%;
+    height: 100%;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #28a745;
+}
+
+.admin-page .data-table td button {
+    margin: 5px;
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.admin-page .data-table td button:hover {
+    background-color: #28a745;
+}
