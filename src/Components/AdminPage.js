@@ -56,27 +56,19 @@ const AdminPage = () => {
         const header = Object.keys(registrationData[0] || {}).join(",") + "\n";
         csvContent += header;
     
-        registrationData.forEach((entry, index) => {
-            if (index % 1000 === 0) {
-                setTimeout(() => {
-                    const row = Object.values(entry).join(",") + "\n";
-                    csvContent += row;
-    
-                    
-                    if (index === registrationData.length - 1) {
-                        const encodedUri = encodeURI(csvContent);
-                        const link = document.createElement("a");
-                        link.setAttribute("href", encodedUri);
-                        link.setAttribute("download", "registration_data.csv");
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    }
-                }, 0); // Set timeout for chunking the operation
-            }
+        registrationData.forEach(entry => {
+            const row = Object.values(entry).join(",") + "\n";
+            csvContent += row;
         });
-    };
     
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "registration_data.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     const sendWhatsApp = (entry) => {
         const phoneNumber = entry.mobile.startsWith("+") ? entry.mobile : `+${entry.mobile}`;
@@ -102,75 +94,71 @@ const AdminPage = () => {
 
     return (
         <>
-          <img src={Logo} alt="Logo" className="logo" />
-        <div className="admin-page">
-            {/* Filters */}
-            <div className="filters">
-                <h2>Filter Registrations</h2>
-                <input type="text" name="name" placeholder="Name" value={filters.name} onChange={handleFilterChange} />
-                <input type="text" name="surname" placeholder="Surname" value={filters.surname} onChange={handleFilterChange} />
-                <input type="email" name="email" placeholder="Email" value={filters.email} onChange={handleFilterChange} />
-                <input type="text" name="province" placeholder="Province" value={filters.province} onChange={handleFilterChange} />
-                <input type="text" name="city" placeholder="City" value={filters.city} onChange={handleFilterChange} />
-                <button onClick={applyFilters}>Apply Filters</button>
-            </div>
+            <img src={Logo} alt="Logo" className="logo" />
+            <div className="admin-page">
+                <div className="filters">
+                    <h2>Filter Registrations</h2>
+                    <input type="text" name="name" placeholder="Name" value={filters.name} onChange={handleFilterChange} />
+                    <input type="text" name="surname" placeholder="Surname" value={filters.surname} onChange={handleFilterChange} />
+                    <input type="email" name="email" placeholder="Email" value={filters.email} onChange={handleFilterChange} />
+                    <input type="text" name="province" placeholder="Province" value={filters.province} onChange={handleFilterChange} />
+                    <input type="text" name="city" placeholder="City" value={filters.city} onChange={handleFilterChange} />
+                    <button onClick={applyFilters}>Apply Filters</button>
+                </div>
 
-            {/* Table and Map */}
-            <div className="content">
-                {/* Registration Data Table */}
-                <div className="data-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Surname</th>
-                                <th>Email</th>
-                                <th>Province</th>
-                                <th>City</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredData.map((entry, index) => (
-                                <tr key={index}>
-                                    <td>{entry.name}</td>
-                                    <td>{entry.surname}</td>
-                                    <td>{entry.email}</td>
-                                    <td>{entry.province}</td>
-                                    <td>{entry.city}</td>
-                                    <td>
-                                        <button onClick={() => sendWhatsApp(entry)}>Send WhatsApp</button>
-                                        <button onClick={() => sendEmail(entry)}>Send Email</button>
-                                        <button onClick={() => sendSMS(entry)}>Send SMS</button>
-                                    </td>
+                <div className="content">
+                    <div className="data-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Surname</th>
+                                    <th>Email</th>
+                                    <th>Province</th>
+                                    <th>City</th>
+                                    <th>Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    <button onClick={downloadExcel}>Download Excel</button>
-                </div>
+                            </thead>
+                            <tbody>
+                                {filteredData.map((entry, index) => (
+                                    <tr key={index}>
+                                        <td>{entry.name}</td>
+                                        <td>{entry.surname}</td>
+                                        <td>{entry.email}</td>
+                                        <td>{entry.province}</td>
+                                        <td>{entry.city}</td>
+                                        <td>
+                                            <button onClick={() => sendWhatsApp(entry)}>Send WhatsApp</button>
+                                            <button onClick={() => sendEmail(entry)}>Send Email</button>
+                                            <button onClick={() => sendSMS(entry)}>Send SMS</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        <button onClick={downloadExcel}>Download Excel</button>
+                    </div>
 
-                {/* Map */}
-                <div className="map-container">
-                    <MapContainer center={[-29.8587, 31.0218]} zoom={13} scrollWheelZoom={false} className="map">
-                        <TileLayer
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        />
-                        {filteredData.map((entry, index) => (
-                            <Marker
-                                key={index}
-                                position={[entry.latitude || -29.8587, entry.longitude || 31.0218]}
-                            >
-                                <Popup>
-                                    {entry.name} {entry.surname}<br />{entry.city}, {entry.province}
-                                </Popup>
-                            </Marker>
-                        ))}
-                    </MapContainer>
+                    <div className="map-container">
+                        <MapContainer center={[-29.8587, 31.0218]} zoom={13} scrollWheelZoom={false} className="map">
+                            <TileLayer
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            />
+                            {filteredData.map((entry, index) => (
+                                <Marker
+                                    key={index}
+                                    position={[entry.latitude || -29.8587, entry.longitude || 31.0218]}
+                                >
+                                    <Popup>
+                                        {entry.name} {entry.surname}<br />{entry.city}, {entry.province}
+                                    </Popup>
+                                </Marker>
+                            ))}
+                        </MapContainer>
+                    </div>
                 </div>
             </div>
-        </div>
         </>
     );
 };

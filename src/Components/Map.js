@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 
 const MapView = () => {
     const [registrationData, setRegistrationData] = useState([]);
@@ -10,19 +11,20 @@ const MapView = () => {
     }, []);
 
     return (
-        <MapContainer center={[-30.5595, 22.9375]} zoom={5} style={{ height: "2vh", width: "2%" }}>
+        <MapContainer center={[-30.5595, 22.9375]} zoom={5} style={{ height: "100vh", width: "100%" }}>
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
             {registrationData.map((entry, index) => {
-                const { lat, lng } = entry; 
+                const { lat, lng, name, surname, address } = entry;
+
                 if (lat !== undefined && lng !== undefined) {
                     return (
                         <Marker key={index} position={[lat, lng]}>
                             <Popup>
-                                <strong>{entry.name} {entry.surname}</strong><br />
-                                {entry.address}
+                                <strong>{name} {surname}</strong><br />
+                                {address}
                             </Popup>
                         </Marker>
                     );

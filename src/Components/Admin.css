@@ -63,7 +63,7 @@ button {
 }
 
 button:hover {
-    background-color: #28a745;
+    background-color: #218838;
 }
 
 .admin-page .data-table td button {
@@ -77,5 +77,5 @@ button:hover {
 }
 
 .admin-page .data-table td button:hover {
-    background-color: #28a745;
+    background-color: #218838;
 }
