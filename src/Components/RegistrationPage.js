@@ -14,35 +14,43 @@ const RegistrationPage = () => {
         industry: '',
         serviceProvider: '',
         vehicleTracking: '',
-        fireService: ''
+        fireService: '',
+        lat: null,
+        lng: null,
     });
-     
-    const navigate = useNavigate()
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
+        setFormData({ ...formData, [name]: value });
     };
 
-    const geocodeAddress = (address) => {
-        return { lat: -30.5595, lng: 22.9375 };
+    const geocodeAddress = async (address) => {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`);
+        const data = await response.json();
+        if (data.length > 0) {
+            return { lat: data[0].lat, lng: data[0].lon };
+        }
+        return null;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const existingData = JSON.parse(localStorage.getItem('registrationData')) || [];
-        
         const { address } = formData;
-        const { lat, lng } = geocodeAddress(address); 
-
-        const newEntry = { ...formData, lat, lng };
-        existingData.push(newEntry);
-        localStorage.setItem('registrationData', JSON.stringify(existingData));
-        setFormData({ name: '', surname: '', mobile: '', email: '', address: '', industry: '', serviceProvider: '', vehicleTracking: '', fireService: '' });
-        navigate('/admin');
+        const location = await geocodeAddress(address);
+        console.log(location); 
+        
+        if (location) {
+            const newEntry = { ...formData, ...location };
+            const existingData = JSON.parse(localStorage.getItem('registrationData')) || [];
+            existingData.push(newEntry);
+            localStorage.setItem('registrationData', JSON.stringify(existingData));
+            setFormData({ name: '', surname: '', mobile: '', email: '', address: '', industry: '', serviceProvider: '', vehicleTracking: '', fireService: '', lat: null, lng: null });
+            navigate('/admin');
+        } else {
+            alert('Address not found. Please try again.');
+        }
     };
 
     return (
