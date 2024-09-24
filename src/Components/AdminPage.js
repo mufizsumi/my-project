@@ -5,6 +5,7 @@ import L from 'leaflet';
 import './Admin.css';
 import Logo from '../logo/logo.png';
 
+// Configure leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -50,30 +51,10 @@ const AdminPage = () => {
         setFilteredData(filtered);
     };
 
-    const downloadExcel = () => {
-        let csvContent = "data:text/csv;charset=utf-8,";
-        const header = Object.keys(registrationData[0] || {}).join(",") + "\n";
-        csvContent += header;
-
-        registrationData.forEach(entry => {
-            const row = Object.values(entry).join(",") + "\n";
-            csvContent += row;
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "registration_data.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
     return (
         <div className="admin-page">
             <img src={Logo} alt="Logo" className="logo" />
             <h1>Admin Page</h1>
-
             <div className="filters">
                 <h2>Filter Registrations</h2>
                 <input type="text" name="name" placeholder="Name" value={filters.name} onChange={handleFilterChange} />
@@ -82,12 +63,9 @@ const AdminPage = () => {
                 <input type="text" name="province" placeholder="Province" value={filters.province} onChange={handleFilterChange} />
                 <input type="text" name="city" placeholder="City" value={filters.city} onChange={handleFilterChange} />
                 <button onClick={applyFilters}>Apply Filters</button>
-                
             </div>
-
             <div className="content">
                 <div className="data-table">
-                    <h2>Registration Data</h2>
                     <table>
                         <thead>
                             <tr>
@@ -96,6 +74,7 @@ const AdminPage = () => {
                                 <th>Email</th>
                                 <th>Province</th>
                                 <th>City</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -106,32 +85,30 @@ const AdminPage = () => {
                                     <td>{entry.email}</td>
                                     <td>{entry.province}</td>
                                     <td>{entry.city}</td>
+                                    <td>
+                                        {/* Action buttons can go here */}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                    <button onClick={downloadExcel}>Download Excel</button>
                 </div>
-
                 <div className="map-container">
                     <MapContainer center={[-30.5595, 22.9375]} zoom={5} style={{ height: "500px", width: "100%" }}>
                         <TileLayer
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         />
-                        {filteredData.map((entry, index) => {
-                            if (entry.lat && entry.lng) {
-                                return (
-                                    <Marker key={index} position={[entry.lat, entry.lng]}>
-                                        <Popup>
-                                            <strong>{entry.name} {entry.surname}</strong><br />
-                                            {entry.address}, {entry.city}, {entry.province}
-                                        </Popup>
-                                    </Marker>
-                                );
-                            }
-                            return null;
-                        })}
+                        {filteredData.map((entry, index) => (
+                            entry.lat && entry.lng ? (
+                                <Marker key={index} position={[entry.lat, entry.lng]}>
+                                    <Popup>
+                                        <strong>{entry.name} {entry.surname}</strong><br />
+                                        {entry.address}, {entry.city}, {entry.province}
+                                    </Popup>
+                                </Marker>
+                            ) : null
+                        ))}
                     </MapContainer>
                 </div>
             </div>
